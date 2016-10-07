@@ -32,6 +32,7 @@ import javax.swing.DefaultComboBoxModel;
 
 public class Main {
 	
+	//Constantes para rellenar el calendario con los colores
 	final static int BLANK = 0;
 	final static int ADMIN = 1;
 	final static int SOCIO = 2;
@@ -43,8 +44,8 @@ public class Main {
 	JComboBox<Instalacion> cbInstalaciones ;
 
 	/**
-	 * Launch the application.
-	 */
+	*
+	*/
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -66,7 +67,7 @@ public class Main {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * inicializa los componentes ademas de añadir algunos gatillos
 	 */
 	private void initialize() {
 		frame = new JFrame();
@@ -115,14 +116,20 @@ public class Main {
 		
 	}
 	
+	/**
+	*Actualiza la fecha mostrada encima del calendario con la ayuda de la Agenda
+	*/
 	private void updateDate(){	
 		Calendar auxCalendar = (Calendar) agenda.getCalendar().clone();
 		auxCalendar.add(Calendar.DAY_OF_MONTH, (auxCalendar.get(Calendar.DAY_OF_WEEK)-2)*-1);
 		String prev = (auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR));
 		auxCalendar.add(Calendar.DAY_OF_MONTH, 6);
-		lblFecha.setText("Desde: "+prev + " hasta: "+auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR)+"  -Administraci�n: Azul, Socio: Verde");
+		lblFecha.setText("Desde: "+prev + " hasta: "+auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR)+"  -Administración: Azul, Socio: Verde");
 	}
-
+	
+	/*
+	*Iniicializa el calendario y lo adapta a la pantalla
+	*/
 	private void initializeCalendar() {
 		agenda = new Agenda();
 		table = new JTable(24,8);
@@ -146,15 +153,17 @@ public class Main {
             }
         });
 		
-		
-		
 		for(int i = 0;i < table.getColumnCount();i++)table.getColumnModel().getColumn(i).setCellRenderer(new ColorRenderer());
 		
 		fillCalendar();		
 		
 		frame.getContentPane().add(scrollPane , BorderLayout.CENTER);
 	}
-
+	
+	/**
+	*Rellena el calendario con los datos proporcionados por la agenda y el combobox
+	*
+	*/
 	private void fillCalendar() {
 		Instalacion currentInstalacion = (Instalacion) cbInstalaciones.getSelectedItem();
 		
