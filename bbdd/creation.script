@@ -1,0 +1,31 @@
+CREATE TABLE usuario (cod_usuario INTEGER, CONSTRAINT usuario_pk PRIMARY KEY(cod_usuario));
+CREATE TABLE administrador (cod_usuario INTEGER, rol VARCHAR(10), CONSTRAINT administrador_pk PRIMARY KEY(cod_usuario), CONSTRAINT administrador_fk FOREIGN KEY(cod_usuario) REFERENCES usuario(cod_usuario));
+CREATE TABLE socio (cod_usuario INTEGER, CONSTRAINT socio_pk PRIMARY KEY(cod_usuario), CONSTRAINT socio_fk FOREIGN KEY(cod_usuario) REFERENCES usuario(cod_usuario));
+CREATE TABLE instalacion (cod_instalacion INTEGER,nombre_instalacion VARCHAR(15),CONSTRAINT instalacion_pk PRIMARY KEY(cod_instalacion));
+CREATE TABLE reserva (cod_instalacion INTEGER, cod_usuario INTEGER, fecha DATETIME, CONSTRAINT reserva_pk PRIMARY KEY(cod_instalacion,cod_usuario), CONSTRAINT reserva_instalacion_fk FOREIGN KEY(cod_instalacion) REFERENCES instalacion(cod_instalacion)
+, CONSTRAINT reserva_usuario_fk FOREIGN KEY(cod_usuario) REFERENCES usuario(cod_usuario));
+
+
+INSERT INTO usuario VALUES(1);
+INSERT INTO usuario VALUES(2);
+INSERT INTO usuario VALUES(3);
+INSERT INTO administrador VALUES(1,'direccion');
+INSERT INTO socio VALUES(2);
+INSERT INTO socio VALUES(3);
+INSERT INTO instalacion VALUES(1,'gimnasio');
+INSERT INTO instalacion VALUES(2,'p futbol');
+INSERT INTO instalacion VALUES(3,'p baloncesto');
+
+INSERT INTO reserva VALUES(1,1,'2016-10-08 21:00:00');
+INSERT INTO reserva VALUES(1,2,'2016-10-03 16:00:00');
+INSERT INTO reserva VALUES(1,1,'2016-10-03 12:00:00');
+INSERT INTO reserva VALUES(1,3,'2016-10-03 09:00:00');
+INSERT INTO reserva VALUES(1,2,'2016-10-03 21:00:00');
+
+INSERT INTO reserva VALUES(3,2,'2016-10-06 20:00:00');
+INSERT INTO reserva VALUES(3,1,'2016-10-06 16:00:00');
+
+
+INSERT INTO reserva VALUES(2,3,'2016-10-06 20:00:00');
+INSERT INTO reserva VALUES(2,1,'2016-10-06 20:00:00');
+
