@@ -28,20 +28,28 @@ public class Agenda {
 	}
 	
 	
-	
+	/*
+	*Descarga informacion de una semana despues a la actual ademas de actualizar el contador  interno
+	*/
 	public void oneWeekMore(){
 		currentWeek++;
 		calendar.add(Calendar.DAY_OF_MONTH, 7);
 		loadCurrentWeek();
 	}
 	
+	/*
+	*Descarga informacion de una semana antes a la actual ademas de actualizar el contador  interno
+	*/
 	public void oneWeekLess(){
 		currentWeek--;
 		calendar.add(Calendar.DAY_OF_MONTH, -7);
 		loadCurrentWeek();
 	}
-
-
+	
+	
+	/*
+	*En primer lugar compruevba si ya estan descargados estos datos, si no lo estan procede a descargarlos y introducirlos en la lista interna
+	*/
 	private void loadCurrentWeek() {
 		if(!reservations.containsKey(currentWeek)){//Si no esta en el diccionario entonces bajatelo de la base de datos
 			Calendar auxCalendar = (Calendar) calendar.clone();
@@ -91,7 +99,9 @@ public class Agenda {
 
 
 	
-		
+	/**
+	* Parsea las reservas y las introduce en la lista interna
+	*/
 	private void loadReservations(ResultSet rs, boolean administrador) {
 		List<Reservation> auxReservations;
 		if(reservations.containsKey(currentWeek))
