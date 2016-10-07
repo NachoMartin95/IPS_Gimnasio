@@ -23,10 +23,10 @@ public class QueryExecutor {
 	}
 
 	/**
-	 * Method that executes a given query in parallel in order not to interfere with the main GUI thread
+	 * Metodo que ejecuta una query en paralelo.
 	 * 
 	 * @param query
-	 * @return
+	 * @return ResultSet proporcionado por la base de datos
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
