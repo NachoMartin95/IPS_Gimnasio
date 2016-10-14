@@ -5,26 +5,29 @@ import java.util.Calendar;
 
 public class Reservation {
 	
-	private Calendar date;
+	private Calendar startDate;
+	private Calendar finishDate;
 	private Instalacion instalacion;
 	private boolean administracion;
 	
 
 
 
-	public Reservation(Calendar date, String instalacion, boolean administracion) {
-		this.date = date;
+	public Reservation(Calendar startDate,Calendar finishDate, String instalacion, boolean administracion) {
+		this.startDate = startDate;
+		this.finishDate = finishDate;
 		setInstalacion(instalacion);
 		this.administracion = administracion;
 	}
 
 
 	
-	public int getDay() {return date.get(Calendar.DAY_OF_MONTH)-1;}
-	public int getMonth() {	return date.get(Calendar.MONTH)+1;}
-	public int getYear() {return date.get(Calendar.YEAR);}
-	public int getHour() {return date.get(Calendar.HOUR_OF_DAY);}
-	public int getWeekDay(){return date.get(Calendar.DAY_OF_WEEK)-2;}
+	public int getDay() {return startDate.get(Calendar.DAY_OF_MONTH)-1;}
+	public int getMonth() {	return startDate.get(Calendar.MONTH)+1;}
+	public int getYear() {return startDate.get(Calendar.YEAR);}
+	public int getStartHour() {return startDate.get(Calendar.HOUR_OF_DAY);}
+	public int getEndHour() {return finishDate.get(Calendar.HOUR_OF_DAY);}
+	public int getWeekDay(){return startDate.get(Calendar.DAY_OF_WEEK)-2;}
 	public Instalacion getInstalacion() {return instalacion;}
 	
 	

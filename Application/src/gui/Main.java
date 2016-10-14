@@ -29,6 +29,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.DefaultComboBoxModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class Main {
 	
@@ -42,6 +44,10 @@ public class Main {
 	private Agenda agenda;
 	private JLabel lblFecha;
 	JComboBox<Instalacion> cbInstalaciones ;
+	
+	private SelectedDate sD = new SelectedDate();
+	private VentanaReserva vR;
+	private Main m = this;
 
 	/**
 	*
@@ -69,12 +75,12 @@ public class Main {
 	/**
 	 * inicializa los componentes ademas de añadir algunos gatillos
 	 */
-	private void initialize() {
+	protected void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 1600, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
-		
+		frame.setLocationRelativeTo(null);
 		cbInstalaciones = new JComboBox<Instalacion>();
 		cbInstalaciones.setModel(new DefaultComboBoxModel(Instalacion.values()));		
 		frame.getContentPane().add(cbInstalaciones, BorderLayout.SOUTH);
@@ -124,7 +130,25 @@ public class Main {
 		auxCalendar.add(Calendar.DAY_OF_MONTH, (auxCalendar.get(Calendar.DAY_OF_WEEK)-2)*-1);
 		String prev = (auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR));
 		auxCalendar.add(Calendar.DAY_OF_MONTH, 6);
-		lblFecha.setText("Desde: "+prev + " hasta: "+auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR)+"  -Administración: Azul, Socio: Verde");
+		lblFecha.setText("Desde: "+prev + " hasta: "+auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR)+"  -Administracion: Azul, Socio: Verde");
+	}
+	
+	private class SelectedDate extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			int row = table.getSelectedRow();
+			int col = table.getSelectedColumn();
+			
+			if(!table.getModel().getValueAt(row, col).toString().equals("0"))
+				System.out.println("Instalacion ocupada");
+			else{			
+				Calendar c = (Calendar) agenda.getCalendar();
+				String dia = (c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH));
+				
+				vR = new VentanaReserva(m, dia, row);
+				vR.setVisible(true);
+			}
+		}
 	}
 	
 	/*
@@ -133,6 +157,7 @@ public class Main {
 	private void initializeCalendar() {
 		agenda = new Agenda();
 		table = new JTable(24,8);
+		table.addMouseListener(sD);	
 		table.setRowSelectionAllowed(false);
 		table.getTableHeader().setReorderingAllowed(false);
 		final JScrollPane scrollPane = new JScrollPane(table);
@@ -174,14 +199,21 @@ public class Main {
 		List<Reservation> reservations = agenda.getReservations();
 		
 		for(Reservation res: reservations){
-			if(currentInstalacion.equals(res.getInstalacion()))
-				table.setValueAt((res.isAdministracion())?new Integer(ADMIN):new Integer(SOCIO), res.getHour(), res.getWeekDay()+1);			
+			if(currentInstalacion.equals(res.getInstalacion())){
+				for(int i = res.getStartHour();i < res.getEndHour();i++)
+				table.setValueAt((res.isAdministracion())?new Integer(ADMIN):new Integer(SOCIO), i, res.getWeekDay()+1);
+				}			
 		}
 		
 		for (int i = 0; i < table.getRowCount(); i++) {
             table.setValueAt("From "+i +":00 to "+i+":59", i, 0);
         }
 		
+	}
+	
+	public void close(){
+		vR.dispose();
+		fillCalendar();
 	}
 
 }

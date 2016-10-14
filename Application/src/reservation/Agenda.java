@@ -71,8 +71,7 @@ public class Agenda {
 			
 			
 			String query = "SELECT * FROM reserva NATURAL JOIN instalacion NATURAL JOIN usuario NATURAL JOIN socio"+
-					" WHERE fecha >"+"'"+year+"-"+monthStr+"-"+dayOfWeekBeginStr+" 00:00:00'"
-					+"AND fecha <"+"'"+year+"-"+monthStr+"-"+dayOfWeekEndStr+" 23:59:59'";
+					" WHERE fecha >"+"'"+year+"-"+monthStr+"-"+dayOfWeekBeginStr+"'";
 			
 			try {
 				ResultSet rs = queryExecutor.execute(query);
@@ -82,8 +81,7 @@ public class Agenda {
 			}
 			
 			query = "SELECT * FROM reserva NATURAL JOIN instalacion NATURAL JOIN usuario NATURAL JOIN administrador"+
-					" WHERE fecha >"+"'"+year+"-"+monthStr+"-"+dayOfWeekBeginStr+" 00:00:00'"
-					+"AND fecha <"+"'"+year+"-"+monthStr+"-"+dayOfWeekEndStr+" 23:59:59'";
+					" WHERE fecha >"+"'"+year+"-"+monthStr+"-"+dayOfWeekBeginStr+"'";
 			
 			try {
 				ResultSet rs = queryExecutor.execute(query);
@@ -110,9 +108,13 @@ public class Agenda {
 			auxReservations = new ArrayList<Reservation>();
 		try {
 			while(rs.next()){
-				Calendar auxCalendar = Calendar.getInstance();
-				auxCalendar.setTime(rs.getTimestamp("fecha"));
-				auxReservations.add(new Reservation(auxCalendar,
+				Calendar auxCalendarStart = Calendar.getInstance();
+				auxCalendarStart.setTime(rs.getTimestamp("fecha"));
+				auxCalendarStart.setTime(rs.getTime("hora_inicial"));
+				Calendar auxCalendarEnd = Calendar.getInstance();
+				auxCalendarEnd.setTime(rs.getTimestamp("fecha"));
+				auxCalendarEnd.setTime(rs.getTime("hora_final"));
+				auxReservations.add(new Reservation(auxCalendarStart,auxCalendarEnd,
 						rs.getString("nombre_instalacion"),administrador));
 				}					
 		} catch (SQLException e) {e.printStackTrace();}
