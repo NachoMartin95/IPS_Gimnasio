@@ -98,6 +98,8 @@ public class VentanaReserva extends JFrame {
 						if(txSocio.getText().equals("")) return;
 						guardaReserva();
 						System.out.println("Su reserva se ha efectuado con exito");
+						m.agenda.updated = false;
+						m.fillCalendar();
 						m.close();
 					}
 				}

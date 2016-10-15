@@ -2,8 +2,6 @@ package database;
 import java.sql.*;
 import java.util.concurrent.*;
 
-
-
 public class QueryExecutor {
 	
 	static Connection conn;
@@ -37,5 +35,13 @@ public class QueryExecutor {
 		ExecutorService executor = Executors.newFixedThreadPool(1);
 		Future<ResultSet> future = executor.submit(task);
 		return future.get();	
+	}
+	
+	public void executeInsert(String query){
+		try {
+			stat.executeUpdate(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

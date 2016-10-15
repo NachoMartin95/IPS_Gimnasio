@@ -18,13 +18,20 @@ public class Agenda {
 	int currentWeek;
 	private Calendar calendar;
 	private QueryExecutor queryExecutor;
+	public boolean updated;
 	
 	public Agenda(){		
 		reservations = new  HashMap<Integer,List<Reservation>>();	
 		currentWeek = 0;
 		calendar = Calendar.getInstance();
+		
+		int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)-2;		
+		calendar.add(Calendar.DAY_OF_MONTH, (dayOfWeek)*-1);//Empiece de la semana
+		
 		queryExecutor = new QueryExecutor();
 		loadCurrentWeek();
+		updated = false;
+		
 	}
 	
 	
@@ -50,28 +57,31 @@ public class Agenda {
 	/*
 	*En primer lugar compruevba si ya estan descargados estos datos, si no lo estan procede a descargarlos y introducirlos en la lista interna
 	*/
-	private void loadCurrentWeek() {
-		if(!reservations.containsKey(currentWeek)){//Si no esta en el diccionario entonces bajatelo de la base de datos
+	public void loadCurrentWeek() {
+		if(!reservations.containsKey(currentWeek)  || !updated){//Si no esta en el diccionario entonces bajatelo de la base de datos
 			Calendar auxCalendar = (Calendar) calendar.clone();
 			
-			int month = calendar.get(Calendar.MONTH)+1;
+			int monthStart = calendar.get(Calendar.MONTH)+1;
 			int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)-2;
-			int year = calendar.get(Calendar.YEAR);
+			int yearStart = calendar.get(Calendar.YEAR);
 			
-			auxCalendar.add(Calendar.DAY_OF_MONTH, (dayOfWeek)*-1);//Empiece de la semana
-			int dayOfWeekBegin = auxCalendar.get(Calendar.DAY_OF_MONTH);
+			
+			int dayOfWeekBegin = calendar.get(Calendar.DAY_OF_MONTH);
 			auxCalendar.add(Calendar.DAY_OF_MONTH, 7);//Finalizacion de la semana
 			int dayOfWeekEnd = auxCalendar.get(Calendar.DAY_OF_MONTH)-1;
+			int monthEnd = auxCalendar.get(Calendar.MONTH)+1;
+			int yearEnd = auxCalendar.get(Calendar.YEAR);
 			
 			
 			//Construccion de strings para casar los estandares de DATE en SQL
-			String monthStr = (month<10)?"0"+month:month+"";						
+			String monthStartStr = (monthStart<10)?"0"+monthStart:monthStart+"";	
+			String monthEndStr = (monthEnd<10)?"0"+monthEnd:monthEnd+"";	
 			String dayOfWeekBeginStr = (dayOfWeekBegin<10)?"0"+dayOfWeekBegin:dayOfWeekBegin+"";				
 			String dayOfWeekEndStr = (dayOfWeekEnd<10)?"0"+dayOfWeekEnd:dayOfWeekEnd+"";		
 			
 			
 			String query = "SELECT * FROM reserva NATURAL JOIN instalacion NATURAL JOIN usuario NATURAL JOIN socio"+
-					" WHERE fecha >"+"'"+year+"-"+monthStr+"-"+dayOfWeekBeginStr+"'";
+					" WHERE fecha >"+"'"+yearStart+"-"+monthStartStr+"-"+dayOfWeekBeginStr+"'"+"AND fecha <"+"'"+yearEnd+"-"+monthEndStr+"-"+dayOfWeekEndStr+"'";
 			
 			try {
 				ResultSet rs = queryExecutor.execute(query);
@@ -81,7 +91,7 @@ public class Agenda {
 			}
 			
 			query = "SELECT * FROM reserva NATURAL JOIN instalacion NATURAL JOIN usuario NATURAL JOIN administrador"+
-					" WHERE fecha >"+"'"+year+"-"+monthStr+"-"+dayOfWeekBeginStr+"'";
+					" WHERE fecha >"+"'"+yearStart+"-"+monthStartStr+"-"+dayOfWeekBeginStr+"'"+"AND fecha <"+"'"+yearEnd+"-"+monthEndStr+"-"+dayOfWeekEndStr+"'";
 			
 			try {
 				ResultSet rs = queryExecutor.execute(query);

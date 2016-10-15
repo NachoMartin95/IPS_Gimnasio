@@ -41,7 +41,7 @@ public class Main {
 
 	private JFrame frame;
 	private JTable table;
-	private Agenda agenda;
+	Agenda agenda;
 	private JLabel lblFecha;
 	JComboBox<Instalacion> cbInstalaciones ;
 	
@@ -139,11 +139,12 @@ public class Main {
 			int row = table.getSelectedRow();
 			int col = table.getSelectedColumn();
 			
-			if(!table.getModel().getValueAt(row, col).toString().equals("0"))
+			if(!table.getModel().getValueAt(row, col).equals(BLANK))
 				System.out.println("Instalacion ocupada");
 			else{			
-				Calendar c = (Calendar) agenda.getCalendar();
-				String dia = (c.get(Calendar.YEAR)+"-"+c.get(Calendar.MONTH)+"-"+c.get(Calendar.DAY_OF_MONTH));
+				Calendar c = (Calendar) agenda.getCalendar().clone();
+				c.add(Calendar.DAY_OF_MONTH, col-1);
+				String dia = (c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH));
 				
 				vR = new VentanaReserva(m, dia, row);
 				vR.setVisible(true);
@@ -189,13 +190,14 @@ public class Main {
 	*Rellena el calendario con los datos proporcionados por la agenda y el combobox
 	*
 	*/
-	private void fillCalendar() {
+	void fillCalendar() {
 		Instalacion currentInstalacion = (Instalacion) cbInstalaciones.getSelectedItem();
 		
 		
 		for(int i = 0;i < table.getColumnCount();i++)
 			for(int j = 0;j < table.getRowCount();j++)
-				table.setValueAt(new Integer(BLANK), j, i);		
+				table.setValueAt(new Integer(BLANK), j, i);	
+		agenda.loadCurrentWeek();
 		List<Reservation> reservations = agenda.getReservations();
 		
 		for(Reservation res: reservations){
