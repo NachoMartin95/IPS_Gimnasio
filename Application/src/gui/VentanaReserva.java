@@ -129,7 +129,7 @@ public class VentanaReserva extends JFrame {
 			codigo = 3;
 			break;
 		}
-		String query = "INSERT INTO reserva VALUES(" + codigo + ", " + txSocio.getText() + ", '" + dia + "', '" + txHoraInicial.getText() + "', '" + txHoraFinal.getText() + "')";
+		String query = "INSERT INTO reserva VALUES(" + codigo + ", " + ((admin)?txSocio.getText():m.getUser()) + ", '" + dia + "', '" + txHoraInicial.getText() + "', '" + txHoraFinal.getText() + "')";
 		QueryExecutor qe = new QueryExecutor();
 		try {
 			qe.executeInsert(query);
