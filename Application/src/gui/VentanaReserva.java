@@ -36,13 +36,16 @@ public class VentanaReserva extends JFrame {
 	private Main m;
 	private JTextField txDia;
 	private String dia;
+	boolean admin;
 
 	/**
 	 * Create the frame.
+	 * @param admin 
 	 */
-	public VentanaReserva(Main m, String dia, int hora_inicial) {
+	public VentanaReserva(Main m, String dia, int hora_inicial, boolean admin) {
 		this.m = m;
 		
+		this.admin = admin;
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -96,11 +99,15 @@ public class VentanaReserva extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					if(check()){	
 						if(txSocio.getText().equals("")) return;
-						guardaReserva();
+						if(!admin && (Integer.parseInt(txHoraFinal.getText().split(":")[0]) - Integer.parseInt(txHoraFinal.getText().split(":")[0]) <= 2)  ){
+							guardaReserva();
 						System.out.println("Su reserva se ha efectuado con exito");
 						m.agenda.updated = false;
 						m.fillCalendar();
 						m.close();
+						}else{
+							System.out.println("REserva fallida");
+						}
 					}
 				}
 			});
@@ -141,9 +148,11 @@ public class VentanaReserva extends JFrame {
 		if (panelDatos == null) {
 			panelDatos = new JPanel();
 			panelDatos.setLayout(null);
-			panelDatos.add(getLblSocio());
-			panelDatos.add(getTxSocio());
-			panelDatos.add(getChckbxDiaCompleto());
+			if(admin){
+				panelDatos.add(getLblSocio());
+				panelDatos.add(getTxSocio());
+				panelDatos.add(getChckbxDiaCompleto());
+			}
 			panelDatos.add(getTxHoraInicial());
 			panelDatos.add(getTxHoraFinal());
 			panelDatos.add(getTxDia());
