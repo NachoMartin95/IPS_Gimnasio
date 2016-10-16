@@ -26,6 +26,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableCellRenderer;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.DefaultComboBoxModel;
@@ -39,7 +40,7 @@ public class Main {
 	final static int ADMIN = 1;
 	final static int SOCIO = 2;
 
-	private JFrame frame;
+	public JFrame frame;
 	private JTable table;
 	Agenda agenda;
 	private JLabel lblFecha;
@@ -48,28 +49,17 @@ public class Main {
 	private SelectedDate sD = new SelectedDate();
 	private VentanaReserva vR;
 	private Main m = this;
+	private String user;
 
-	/**
-	*
-	*/
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Main window = new Main();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+
 
 	/**
 	 * Create the application.
 	 */
 	public Main() {
 		initialize();
+		VentanaTipoUsuario frame = new VentanaTipoUsuario(this);
+		frame.setVisible(true);
 	}
 
 	/**
@@ -133,24 +123,7 @@ public class Main {
 		lblFecha.setText("Desde: "+prev + " hasta: "+auxCalendar.get(Calendar.DAY_OF_MONTH)+"-"+auxCalendar.get(Calendar.MONTH)+"-"+auxCalendar.get(Calendar.YEAR)+"  -Administracion: Azul, Socio: Verde");
 	}
 	
-	private class SelectedDate extends MouseAdapter {
-		@Override
-		public void mouseClicked(MouseEvent arg0) {
-			int row = table.getSelectedRow();
-			int col = table.getSelectedColumn();
-			
-			if(!table.getModel().getValueAt(row, col).equals(BLANK))
-				System.out.println("Instalacion ocupada");
-			else{			
-				Calendar c = (Calendar) agenda.getCalendar().clone();
-				c.add(Calendar.DAY_OF_MONTH, col-1);
-				String dia = (c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH));
-				
-				vR = new VentanaReserva(m, dia, row);
-				vR.setVisible(true);
-			}
-		}
-	}
+	
 	
 	/*
 	*Iniicializa el calendario y lo adapta a la pantalla
@@ -197,6 +170,7 @@ public class Main {
 		for(int i = 0;i < table.getColumnCount();i++)
 			for(int j = 0;j < table.getRowCount();j++)
 				table.setValueAt(new Integer(BLANK), j, i);	
+		
 		agenda.loadCurrentWeek();
 		List<Reservation> reservations = agenda.getReservations();
 		
@@ -216,6 +190,34 @@ public class Main {
 	public void close(){
 		vR.dispose();
 		fillCalendar();
+	}
+
+	public void setUser(String text) {
+		this.user = text; 
+		
+	}
+	
+	private class SelectedDate extends MouseAdapter {
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			int row = table.getSelectedRow();
+			int col = table.getSelectedColumn();
+			
+			if(!table.getModel().getValueAt(row, col).equals(BLANK))
+				System.out.println("Instalacion ocupada");
+			else{			
+				Calendar c = (Calendar) agenda.getCalendar().clone();
+				c.add(Calendar.DAY_OF_MONTH, col-1);
+				String dia = (c.get(Calendar.YEAR)+"-"+(c.get(Calendar.MONTH)+1)+"-"+c.get(Calendar.DAY_OF_MONTH));
+				
+				vR = new VentanaReserva(m, dia, row, user.trim().equals("1"));
+				vR.setVisible(true);
+			}
+		}
+	}
+
+	public String getUser() {
+		return user;
 	}
 
 }
